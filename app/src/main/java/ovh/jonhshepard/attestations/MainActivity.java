@@ -1,55 +1,104 @@
 package ovh.jonhshepard.attestations;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ListView;
+
+import androidx.annotation.Nullable;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import ovh.jonhshepard.attestations.storage.Certificate;
+import ovh.jonhshepard.attestations.wrappers.ActivityWithCertificateList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ActivityWithCertificateList {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        ListView listView = findViewById(R.id.listViewRecentCertif);
+        listView.setAdapter(getCertificateAdapter());
+
+        Button listCertif = findViewById(R.id.buttonListAllCertificates);
+        listCertif.setOnClickListener(v -> {
+            Intent nextScreen = new Intent(getApplicationContext(), ListCertificatesActivity.class);
+            startActivityForResult(nextScreen, 42);
+        });
+
+        Button listIdent = findViewById(R.id.buttonListIdentities);
+        listIdent.setOnClickListener(v -> {
+            Intent nextScreen = new Intent(getApplicationContext(), ListIdentitiesActivity.class);
+            startActivityForResult(nextScreen, 42);
+        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        fab.setOnClickListener(view -> {
+            if (getDB().getIdentities().size() == 0) {
+                Snackbar.make(view, R.string.no_identity, Snackbar.LENGTH_LONG).show();
+                return;
             }
+            Intent nextScreen = new Intent(getApplicationContext(), AddCertificateActivity.class);
+            startActivityForResult(nextScreen, 42);
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        updateList();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        if (getDB().getIdentities().size() == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            builder.setMessage(R.string.no_identity_create)
+                    .setTitle(R.string.no_identity_title);
+
+            builder.setPositiveButton(R.string.yes, (dialog, id) -> {
+                Intent nextScreen = new Intent(getApplicationContext(), EditAddIdentityActivity.class);
+                startActivityForResult(nextScreen, 42);
+            });
+            builder.setNegativeButton(R.string.no, (dialog, id) -> {
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void updateList() {
+        List<Certificate> certificates = getDB().getCertificates();
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MINUTE, 1);
+        Calendar maxD = Calendar.getInstance();
+        maxD.add(Calendar.DAY_OF_YEAR, -2);
+        for(Certificate certificate : getDB().getCertificates()) {
+            if(certificate.getDate().before(now.getTime())
+            && certificate.getDate().after(maxD.getTime())) {
+                certificates.add(certificate);
+            }
+        }
+        Collections.sort(certificates);
+
+        // Updating list
+        getCertificateAdapter().clear();
+        getCertificateAdapter().addAll(certificates);
+        getCertificateAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Updating calendar after showing activities
+        if (requestCode == 42)
+            updateList();
+    }
+
 }
