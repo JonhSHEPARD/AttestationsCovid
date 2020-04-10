@@ -15,19 +15,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/buttonListAllCertificates"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/listCertificates" />
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonListIdentities"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/listIdentities" />
+                <Button
+                    android:id="@+id/buttonListAllCertificates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/listCertificates" />
+
+                <Button
+                    android:id="@+id/buttonListIdentities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/listIdentities" />
+
+            </LinearLayout>
+
         </TableRow>
 
         <TableRow

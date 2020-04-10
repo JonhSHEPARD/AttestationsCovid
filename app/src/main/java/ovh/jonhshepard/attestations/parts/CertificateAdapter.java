@@ -1,12 +1,14 @@
 package ovh.jonhshepard.attestations.parts;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.List;
 
 import ovh.jonhshepard.attestations.R;
@@ -72,12 +74,25 @@ public class CertificateAdapter extends ArrayAdapter<Certificate> {
         txtBirthday.setText(Util.formatDate(certificate.getIdentity().getBirthday()));
         txtAddress.setText(certificate.getIdentity().getLivingAddress() + ", "
                 + certificate.getIdentity().getLivingPostalCode() + " " + certificate.getIdentity().getLivingCity());
-        txtReason.setText(certificate.getReason().getShortMsg());
+        txtReason.setText(Util.join("/", certificate.getReasons()));
         txtDate.setText(Util.formatDateHour(certificate.getDate()));
 
-        // If the element is selected, setting the background to grey
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MINUTE, 30);
+        Calendar maxD = Calendar.getInstance();
+        maxD.add(Calendar.DAY_OF_YEAR, -2);
+
         if (convertView.isSelected())
             convertView.setBackgroundColor(context.getColor(R.color.selectedColor));
+        else {
+            if (certificate.getDate().after(now.getTime())) {
+                convertView.setBackgroundColor(context.getColor(R.color.coming));
+            } else if (certificate.getDate().before(maxD.getTime())) {
+                convertView.setBackgroundColor(context.getColor(R.color.past));
+            } else {
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+            }
+        }
 
         return convertView;
     }

@@ -12,7 +12,6 @@ import java.util.List;
 
 import ovh.jonhshepard.attestations.parts.CertificateListContextMenu;
 import ovh.jonhshepard.attestations.storage.Certificate;
-import ovh.jonhshepard.attestations.storage.Identity;
 import ovh.jonhshepard.attestations.wrappers.ActivityWithCertificateList;
 
 public class ListCertificatesActivity extends ActivityWithCertificateList {
@@ -24,8 +23,12 @@ public class ListCertificatesActivity extends ActivityWithCertificateList {
 
         ListView listView = findViewById(R.id.listCertificates);
         listView.setAdapter(getCertificateAdapter());
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Certificate certificate = (Certificate) listView.getAdapter().getItem(position);
+            Util.openPdfFile(this, getDB(), certificate);
+        });
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
-            Identity task = getDB().getIdentityFromId((int) view.getTag());
+            Certificate task = getDB().getCertificateFromId((int) view.getTag());
             startActionMode(new CertificateListContextMenu(ListCertificatesActivity.this, getDB(), task, view));
             view.setSelected(true);
             getCertificateAdapter().notifyDataSetChanged();

@@ -1,27 +1,28 @@
 package ovh.jonhshepard.attestations.storage;
 
 import java.util.Date;
+import java.util.List;
 
 public class Certificate implements Comparable<Certificate> {
 
     private int id;
     private Identity identity;
-    private EnumReason reason;
+    private List<EnumReason> reasons;
     private Date date;
     private String file;
 
-    public Certificate(int id, Identity identity, EnumReason reason, Date date, String file) {
+    public Certificate(int id, Identity identity, List<EnumReason> reasons, Date date, String file) {
         this.id = id;
         this.identity = identity;
-        this.reason = reason;
+        this.reasons = reasons;
         this.date = date;
         this.file = file;
     }
 
-    public Certificate(Identity identity, EnumReason reason, Date date, String file) {
+    public Certificate(Identity identity, List<EnumReason>  reasons, Date date, String file) {
         this.id = -1;
         this.identity = identity;
-        this.reason = reason;
+        this.reasons = reasons;
         this.date = date;
         this.file = file;
     }
@@ -38,12 +39,12 @@ public class Certificate implements Comparable<Certificate> {
         this.identity = identity;
     }
 
-    public EnumReason getReason() {
-        return reason;
+    public List<EnumReason> getReasons() {
+        return reasons;
     }
 
-    public void setReason(EnumReason reason) {
-        this.reason = reason;
+    public void setReasons(List<EnumReason> reasons) {
+        this.reasons = reasons;
     }
 
     public Date getDate() {
@@ -64,7 +65,7 @@ public class Certificate implements Comparable<Certificate> {
 
     @Override
     public int compareTo(Certificate o) {
-        return this.date.before(o.date) ? -1 :
-                (this.date.after(o.date) ? 1 : 0);
+        return this.date.before(o.date) ? 1 :
+                (this.date.after(o.date) ? -1 : 0);
     }
 }

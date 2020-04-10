@@ -8,7 +8,7 @@ import android.view.View;
 
 import ovh.jonhshepard.attestations.R;
 import ovh.jonhshepard.attestations.Util;
-import ovh.jonhshepard.attestations.storage.Identity;
+import ovh.jonhshepard.attestations.storage.Certificate;
 import ovh.jonhshepard.attestations.storage.SQLiteDatabaseHandler;
 import ovh.jonhshepard.attestations.wrappers.ActivityWithCertificateList;
 
@@ -26,26 +26,26 @@ public class CertificateListContextMenu implements ActionMode.Callback {
      */
     private final SQLiteDatabaseHandler db;
     /**
-     * Identity concerned by the context menu
+     * Certificate concerned by the context menu
      */
-    private final Identity identity;
+    private final Certificate certificate;
     /**
-     * View of the selected identity
+     * View of the selected certificate
      */
     private final View selection;
 
     /**
      * Creating new context menu
      *
-     * @param list Activity containing ListView
-     * @param db Database handler
-     * @param task Task concerned
-     * @param selection View of Task
+     * @param list        Activity containing ListView
+     * @param db          Database handler
+     * @param certificate Certificate concerned
+     * @param selection   View of Certificate
      */
-    public CertificateListContextMenu(ActivityWithCertificateList list, SQLiteDatabaseHandler db, Identity task, View selection) {
+    public CertificateListContextMenu(ActivityWithCertificateList list, SQLiteDatabaseHandler db, Certificate certificate, View selection) {
         this.list = list;
         this.db = db;
-        this.identity = task;
+        this.certificate = certificate;
         this.selection = selection;
     }
 
@@ -53,6 +53,7 @@ public class CertificateListContextMenu implements ActionMode.Callback {
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         return false;
     }
+
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         // Setting title of the context menu
@@ -71,27 +72,25 @@ public class CertificateListContextMenu implements ActionMode.Callback {
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case R.id.menuDelete:
-                // Confirmation for deletion
-                String s = list.getString(R.string.updating_query)
-                        + " " + identity.getLastName() + " " + identity.getFirstName()
-                        + " (" + Util.formatDate(identity.getBirthday()) + ")";
-                new AlertDialog.Builder(list)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(R.string.updating_title)
-                        .setMessage(s)
-                        .setPositiveButton(R.string.yes, (dialog, which) -> {
-                            // If confirmed, delete in Database and update list
-                            db.deleteIdentity(identity);
-                            list.updateList();
-                        })
-                        .setNegativeButton(R.string.no, null)
-                        .show();
-                mode.finish();
-                break;
-            default:
-                return false;
+        if (id == R.id.menuDelete) {// Confirmation for deletion
+            String s = list.getString(R.string.updating_query_certficate)
+                    + " " + certificate.getReasons().size() + " motif" + (certificate.getReasons().size() > 1 ? "s " : " ")
+                    + Util.formatDateHour(certificate.getDate())
+                    + " (" + certificate.getIdentity().getLastName() + " " + certificate.getIdentity().getFirstName() + ")";
+            new AlertDialog.Builder(list)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(R.string.updating_title)
+                    .setMessage(s)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        // If confirmed, delete in Database and update list
+                        db.deleteCertificate(certificate);
+                        list.updateList();
+                    })
+                    .setNegativeButton(R.string.no, null)
+                    .show();
+            mode.finish();
+        } else {
+            return false;
         }
         return false;
     }

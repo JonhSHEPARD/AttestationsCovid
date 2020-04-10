@@ -21,19 +21,28 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="actions">Actions</string>
-    <string name="updating_query">Are you sure you want to delete the identity : </string>
+    <string name="updating_query_identity">Are you sure you want to delete the identity : </string>
+    <string name="updating_query_certficate">Are you sure you want to delete the certificate : </string>
     <string name="updating_title">Deleting</string>
 
     <string name="listCertificates">Certificates</string>
     <string name="listIdentities">Identities</string>
-    <string name="no_identity">Warning! You don\'t have any identity, go to "Identities" to create one</string>
-    <string name="no_identity_create">Warning! You don\'t have any identity, would you like to create one now ?</string>
+    <string name="no_identity">Warning! You don\'t have any saved identity, go to Identities to create one</string>
+    <string name="no_identity_create">Warning! You don\'t have any saved identity, would you like to create one now ?</string>
     <string name="no_identity_title">Warning! No identity</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
     <string name="identity">Identity</string>
-    <string name="reason">Reason</string>
+    <string name="reason">Reasons</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
+
+    <string name="reason_work">Work</string>
+    <string name="reason_food">Groceries</string>
+    <string name="reason_medic">Medical</string>
+    <string name="reason_assist">Family/Assist</string>
+    <string name="reason_sport">Sport/Pets</string>
+    <string name="reason_convoc">Administration call</string>
+    <string name="reason_mission">General interest mission</string>
 </resources>

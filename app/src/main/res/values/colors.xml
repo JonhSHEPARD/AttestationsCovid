@@ -4,4 +4,6 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="past">#61EC58FF</color>
+    <color name="coming">#72FF5B5B</color>
 </resources>

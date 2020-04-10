@@ -6,13 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+
+import java.io.File;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "Certificates";
 
     private static final String IDENT_TABLE_NAME = "identities";
@@ -65,6 +70,10 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
 
     public void deleteIdentity(Identity identity) {
         // Get reference to writable DB
+        for(Certificate certificate : getCertificatesFromIdentity(identity)) {
+            deleteCertificate(certificate);
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(IDENT_TABLE_NAME, "id = ?", new String[]{String.valueOf(identity.getId())});
         db.close();
@@ -149,11 +158,12 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-
-
-
     public void deleteCertificate(Certificate certificate) {
         // Get reference to writable DB
+        File pdf = new File(certificate.getFile());
+        if (pdf.exists())
+            pdf.delete();
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(CERTIF_TABLE_NAME, "id = ?", new String[]{String.valueOf(certificate.getId())});
         db.close();
@@ -162,7 +172,8 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
     private Certificate getCertificateCursor(Cursor cursor) {
         return new Certificate(cursor.getInt(0),
                 getIdentityFromId(cursor.getInt(1)),
-                EnumReason.valueOf(cursor.getString(2)),
+                new Gson().fromJson(cursor.getString(2), new TypeToken<ArrayList<EnumReason>>() {
+                }.getType()),
                 new Date(cursor.getLong(3)),
                 cursor.getString(4));
     }
@@ -199,11 +210,32 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
         return certificates;
     }
 
+    public List<Certificate> getCertificatesFromIdentity(Identity identity) {
+        List<Certificate> certificates = new LinkedList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(CERTIF_TABLE_NAME, // a. table
+                CERTIF_COLUMNS, // b. column names
+                " " + CERTIF_KEY_IDENTIY + " = ?", // c. selections
+                new String[]{String.valueOf(identity.getId())}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        if (cursor.moveToFirst()) {
+            do {
+                certificates.add(getCertificateCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        return certificates;
+    }
+
     public void addCertificate(Certificate certificate) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CERTIF_KEY_IDENTIY, certificate.getIdentity().getId());
-        values.put(CERTIF_KEY_REASON, certificate.getReason().name());
+        values.put(CERTIF_KEY_REASON, new Gson().toJson(certificate.getReasons()));
         values.put(CERTIF_KEY_DATE, certificate.getDate().getTime());
         values.put(CERTIF_KEY_FILE, certificate.getFile());
         // insert
@@ -215,7 +247,7 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CERTIF_KEY_IDENTIY, certificate.getIdentity().getId());
-        values.put(CERTIF_KEY_REASON, certificate.getReason().name());
+        values.put(CERTIF_KEY_REASON, new Gson().toJson(certificate.getReasons()));
         values.put(CERTIF_KEY_DATE, certificate.getDate().getTime());
         values.put(CERTIF_KEY_FILE, certificate.getFile());
 

@@ -69,13 +69,11 @@
             android:layout_marginBottom="20dp"
             android:layout_weight="1">
 
-            <Spinner
-                android:id="@+id/spinnerReason"
+            <include
+                layout="@layout/activity_add_certificate_reasons"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:spinnerMode="dialog" />
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
         </TableRow>
 
 
@@ -148,8 +146,7 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginBottom="10dp">
+            android:layout_weight="1">
 
             <Button
                 android:id="@+id/buttonEdit"

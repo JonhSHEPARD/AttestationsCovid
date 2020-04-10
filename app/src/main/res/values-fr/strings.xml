@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Attestations</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="actions">Actions</string>
+    <string name="add">Ajouter</string>
+    <string name="birthday">Date de naissance</string>
+    <string name="birthplace">Lieu de naissance</string>
+    <string name="date">Date</string>
+    <string name="delete">Supprimer</string>
+    <string name="edit">Modifier</string>
+    <string name="err_birthday">Date de naissance invalide</string>
+    <string name="err_birthplace">Lieu de naissance invalide</string>
+    <string name="err_firstname">Prénom invalide</string>
+    <string name="err_lastname">Nom invalide</string>
+    <string name="err_living_address">Adresse invalide</string>
+    <string name="err_living_city">Ville invalide</string>
+    <string name="err_living_postal_code">Code postal invalide</string>
+    <string name="firstname">Prénom</string>
+    <string name="identity">Identité</string>
+    <string name="lastname">Nom</string>
+    <string name="listCertificates">Attestations</string>
+    <string name="listIdentities">Identités</string>
+    <string name="living_address">Adresse</string>
+    <string name="living_city">Ville</string>
+    <string name="living_postal_code">Code postal</string>
+    <string name="no">Non</string>
+    <string name="no_identity_title">Attention ! Pas d\'identité</string>
+    <string name="no_identity_create">Attention ! Vous n\'avez pas d\'identité enregistrée, voulez-vous en créer une  maintenant ?</string>
+    <string name="no_identity">Attention ! Vous n\'avez pas d\'identité enregistrée, allez sur Identités pour en créer une</string>
+    <string name="reason">Motifs</string>
+    <string name="reason_assist">Famille/Assistance</string>
+    <string name="reason_convoc">Convocation</string>
+    <string name="reason_food">Achats néccésaires</string>
+    <string name="reason_medic">Soins</string>
+    <string name="reason_mission">Mission intérêt général</string>
+    <string name="reason_sport">Sport/Animaux</string>
+    <string name="reason_work">Travail</string>
+    <string name="time">Heure</string>
+    <string name="updating_query_certficate">Êtes-vous sur de vouloir supprimer cette attestation ?</string>
+    <string name="updating_query_identity">Êtes-vous sur de vouloir supprimer cette identité ?</string>
+    <string name="updating_title">Supprimer</string>
+    <string name="yes">Oui</string>
+</resources>

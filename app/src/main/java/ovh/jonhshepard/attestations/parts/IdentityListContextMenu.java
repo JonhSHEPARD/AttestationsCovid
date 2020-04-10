@@ -74,7 +74,7 @@ public class IdentityListContextMenu implements ActionMode.Callback {
         switch (id) {
             case R.id.menuDelete:
                 // Confirmation for deletion
-                String s = list.getString(R.string.updating_query)
+                String s = list.getString(R.string.updating_query_identity)
                         + " " + identity.getLastName() + " " + identity.getFirstName()
                         + " (" + Util.formatDate(identity.getBirthday()) + ")";
                 new AlertDialog.Builder(list)

@@ -1,17 +1,21 @@
 package ovh.jonhshepard.attestations;
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +30,21 @@ public class MainActivity extends ActivityWithCertificateList {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+        }
+
         ListView listView = findViewById(R.id.listViewRecentCertif);
         listView.setAdapter(getCertificateAdapter());
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Certificate certificate = (Certificate) listView.getAdapter().getItem(position);
+            Util.openPdfFile(this, getDB(), certificate);
+        });
 
         Button listCertif = findViewById(R.id.buttonListAllCertificates);
         listCertif.setOnClickListener(v -> {
@@ -73,14 +90,14 @@ public class MainActivity extends ActivityWithCertificateList {
 
     @Override
     public void updateList() {
-        List<Certificate> certificates = getDB().getCertificates();
+        List<Certificate> certificates = new ArrayList<>();
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, 1);
+        now.add(Calendar.MINUTE, 30);
         Calendar maxD = Calendar.getInstance();
         maxD.add(Calendar.DAY_OF_YEAR, -2);
-        for(Certificate certificate : getDB().getCertificates()) {
-            if(certificate.getDate().before(now.getTime())
-            && certificate.getDate().after(maxD.getTime())) {
+        for (Certificate certificate : getDB().getCertificates()) {
+            if (certificate.getDate().before(now.getTime())
+                    && certificate.getDate().after(maxD.getTime())) {
                 certificates.add(certificate);
             }
         }
@@ -101,4 +118,16 @@ public class MainActivity extends ActivityWithCertificateList {
             updateList();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                if (grantResults.length == 0
+                        || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    this.finish();
+                }
+                return;
+            }
+        }
+    }
 }

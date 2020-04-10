@@ -48,19 +48,21 @@ public class EditAddIdentityActivity extends Activity {
 
         birthdate = findViewById(R.id.editTextBirthDay);
         birthdate.setInputType(InputType.TYPE_NULL);
-        birthdate.setOnClickListener(v -> {
-            final Calendar cldr = Calendar.getInstance();
-            int day = cldr.get(Calendar.DAY_OF_MONTH);
-            int month = cldr.get(Calendar.MONTH);
-            int year = cldr.get(Calendar.YEAR);
-            // date picker dialog
-            birthdateDialog = new DatePickerDialog(EditAddIdentityActivity.this,
-                    (view, year1, monthOfYear, dayOfMonth) -> {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(year1, monthOfYear, dayOfMonth);
-                        birthdate.setText(Util.formatDate(calendar.getTime()));
-                    }, year, month, day);
-            birthdateDialog.show();
+        birthdate.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                // date picker dialog
+                birthdateDialog = new DatePickerDialog(EditAddIdentityActivity.this,
+                        (view, year1, monthOfYear, dayOfMonth) -> {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(year1, monthOfYear, dayOfMonth);
+                            birthdate.setText(Util.formatDate(calendar.getTime()));
+                        }, year, month, day);
+                birthdateDialog.show();
+            }
         });
         birthplace = findViewById(R.id.editTextBirthPlace);
         validation.addValidation(this, R.id.editTextBirthPlace, input -> input.length() > 0, R.string.birthplace);

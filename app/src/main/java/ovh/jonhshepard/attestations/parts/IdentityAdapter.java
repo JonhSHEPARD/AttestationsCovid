@@ -1,6 +1,7 @@
 package ovh.jonhshepard.attestations.parts;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +72,8 @@ public class IdentityAdapter extends ArrayAdapter<Identity> {
         // If the element is selected, setting the background to grey
         if (convertView.isSelected())
             convertView.setBackgroundColor(context.getColor(R.color.selectedColor));
+        else
+            convertView.setBackgroundColor(Color.TRANSPARENT);
 
         return convertView;
     }
