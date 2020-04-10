@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 keys/*
+*.apk
+output.json
