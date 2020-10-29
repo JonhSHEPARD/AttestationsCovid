@@ -2,15 +2,12 @@ package ovh.jonhshepard.attestations;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.itextpdf.barcodes.BarcodeQRCode;
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
@@ -115,49 +112,51 @@ public class Util {
 
             Identity identity = certificate.getIdentity();
 
-            drawText(canvas, font, identity.getFirstName() + " " + identity.getLastName(), 123, 686);
-            drawText(canvas, font, formatDate(identity.getBirthday()), 123, 661);
-            drawText(canvas, font, identity.getBirthplace(), 92, 638);
+            drawText(canvas, font, identity.getFirstName() + " " + identity.getLastName(), 119, 701);
+            drawText(canvas, font, formatDate(identity.getBirthday()), 119, 677);
+            drawText(canvas, font, identity.getBirthplace(), 297, 677);
             drawText(canvas, font, identity.getLivingAddress() + " "
                     + identity.getLivingPostalCode()
-                    + " " + identity.getLivingCity(), 134, 613);
+                    + " " + identity.getLivingCity(), 133, 657);
 
             if (certificate.getReasons().contains(EnumReason.WORK)) {
-                drawText(canvas, font, "x", 76, 527, 19);
+                drawText(canvas, font, "x", 84, 578, 19);
             }
             if (certificate.getReasons().contains(EnumReason.FOOD)) {
-                drawText(canvas, font, "x", 76, 478, 19);
+                drawText(canvas, font, "x", 84, 533, 19);
             }
             if (certificate.getReasons().contains(EnumReason.MEDIC)) {
-                drawText(canvas, font, "x", 76, 436, 19);
+                drawText(canvas, font, "x", 84, 477, 19);
             }
             if (certificate.getReasons().contains(EnumReason.ASSIST)) {
-                drawText(canvas, font, "x", 76, 400, 19);
+                drawText(canvas, font, "x", 84, 436, 19);
             }
             if (certificate.getReasons().contains(EnumReason.SPORT)) {
-                drawText(canvas, font, "x", 76, 345, 19);
+                drawText(canvas, font, "x", 84, 358, 19);
             }
             if (certificate.getReasons().contains(EnumReason.CONVOC)) {
-                drawText(canvas, font, "x", 76, 298, 19);
+                drawText(canvas, font, "x", 84, 295, 19);
             }
             if (certificate.getReasons().contains(EnumReason.MISSION)) {
-                drawText(canvas, font, "x", 76, 260, 19);
+                drawText(canvas, font, "x", 84, 255, 19);
             }
 
 
-            drawText(canvas, font, identity.getLivingCity(), 111, 227, 12);
+            drawText(canvas, font, identity.getLivingCity(), 105, 180, 12);
 
             // Date sortie
-            drawText(canvas, font, formatDate(certificate.getDate()), 92, 203);
-            drawText(canvas, font, getHours(certificate.getDate()), 197, 203);
-            drawText(canvas, font, getMinutes(certificate.getDate()), 220, 203);
+            drawText(canvas, font, formatDate(certificate.getDate()), 91, 155);
+            drawText(canvas, font, getHours(certificate.getDate()) + " " +
+                    getMinutes(certificate.getDate()), 264, 155);
 
             // Date création
-            drawText(canvas, font, "Date de création:", 464, 150, 7);
             Date d = new Date(certificate.getDate().getTime() - 600000);
+            /*
+            drawText(canvas, font, "Date de création:", 464, 150, 7);
             drawText(canvas, font, formatDate(d) + " à " + formatTime(d), 455, 144, 7);
+             */
 
-            String qrdata = join("; ", Arrays.asList("Cree le: " + formatDate(d) + " a " + formatTime(d),
+            String qrdata = join(";\n ", Arrays.asList("Cree le: " + formatDate(d) + " a " + formatTime(d),
                     "Nom: " + identity.getLastName(),
                     "Prenom: " + identity.getFirstName(),
                     "Naissance: " + formatDate(identity.getBirthday()) + " a " + identity.getBirthplace(),
@@ -165,7 +164,7 @@ public class Util {
                             + " " + identity.getLivingCity(),
                     "Sortie: " + formatDate(certificate.getDate()) + " a " +
                             getHours(certificate.getDate()) + "h" + getMinutes(certificate.getDate()),
-                    "Motifs: " + join("-", certificate.getReasons()))
+                    "Motifs: " + join(", ", certificate.getReasons()))
             );
 
             Map<EncodeHintType, Object> hints = new HashMap<>();
@@ -177,7 +176,7 @@ public class Util {
             // Create the QR-code
             BarcodeQRCode qrCode = new BarcodeQRCode(qrdata, hints);
             Image qrCodeAsImage = new Image(qrCode.createFormXObject(pdfDoc));
-            qrCodeAsImage.setFixedPosition(page.getPageSize().getWidth() - 170, 155);
+            qrCodeAsImage.setFixedPosition(page.getPageSize().getWidth() - 156, 100);
             qrCodeAsImage.scaleAbsolute(100, 100);
             canvas.add(qrCodeAsImage);
 
@@ -234,7 +233,7 @@ public class Util {
 
     public static void openPdfFile(Activity ctx, SQLiteDatabaseHandler db, Certificate certificate) {
         File pdf = new File(certificate.getFile());
-        if(!pdf.exists()) {
+        if (!pdf.exists()) {
             certificate.setFile(Util.manipulatePdf(ctx, certificate));
             db.updateCertificate(certificate);
         }
